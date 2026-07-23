@@ -4,8 +4,10 @@ import "dotenv/config"
 import connectDB from "./config/db.mjs";
 
 
+
 const app= express();
 const port = process.env.PORT
+
 
 connectDB();
 
