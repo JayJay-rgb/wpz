@@ -1,4 +1,6 @@
-import user from "../models/userModel.mjs";
+import {user }from "../model/userSchema.mjs";
+import hashPassword from "../utils/hashing.mjs"
+
 
 
 const registerController = async (req,res)=>{

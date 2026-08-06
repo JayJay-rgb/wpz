@@ -1,0 +1,28 @@
+import jwt from "jsonwebtoken"
+import "dotenv/config"
+
+const verifyJwt= async(req,res,next)=>{
+    try{
+        const authorizedHeader =  req.headers.authorization||req.headers.Authorization;
+        if(!authorizedHeader || !authorizedHeader.startsWith('Bearer')) return res.sendStatus(403);
+        const token = authorizedHeader.split(" ")[1]
+        
+
+        jwt.verify(
+            token,
+            process.env.ACCESS_TOKEN_SECRET,
+            (err,decoded)=>{
+                if(err){
+                    console.log(err)
+                    return res.sendStatus(403)
+                }
+                req.user=decoded.id
+                next()
+            }
+        )
+    }catch(err){
+        console.log(err)
+        res.sendStatus(500)
+    }
+}
+export default verifyJwt

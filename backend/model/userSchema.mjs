@@ -1,12 +1,32 @@
 import mongoose from "mongoose";
 
 const portfolioItemSchema = new mongoose.Schema({
-  title: String,
-  url: String,
-  description: String,
-  projectImage:String,
-  projectId:String
+  imageUrl: {
+    type: String,
+    default: null,
+  },
+  publicId: {
+    type: String,
+    default: null,
+  },
+  title: {
+    type: String,
+    required: true,
+  },
+  description: {
+    type: String,
+    default: "",
+  },
+  link: {
+    type: String,
+    default: null,
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
 });
+
 const userSchema= new mongoose.Schema({
     name:{
         type:String,

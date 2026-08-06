@@ -1,7 +1,7 @@
-import user from "../model/userSchema.mjs";
+import {user} from "../model/userSchema.mjs";
 import jwt from "jsonwebtoken";
 import "dotenv/config";
-import { comparePassword,hashPassword } from "../utils/passwordUtils.mjs";
+import { comparePassword,hashPassword } from "../utils/hashing.mjs";
 
 const authController = async (req, res) => {
     try{
