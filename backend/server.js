@@ -22,8 +22,13 @@ import cookieParser from "cookie-parser";
 const app = express();
 const port = process.env.PORT
 
+const allowedOrigins = [
+  "http://localhost:5173",
+  process.env.CLIENT_URL
+].filter(Boolean);
+
 app.use(cors({
-  origin: process.env.CLIENT_URL,
+  origin: allowedOrigins,
   credentials: true,
 }));
 app.use(express.json())
@@ -32,10 +37,10 @@ app.use(cookieParser())
 const server = http.createServer(app)
 const io = new Server(server, {
   cors: {
-    origin: process.env.CLIENT_URL,
+    origin: allowedOrigins,
     credentials: true,
   },
-})
+});
 app.set("io", io);
 
 setupSocket(io)
