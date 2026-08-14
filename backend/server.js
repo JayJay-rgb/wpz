@@ -56,7 +56,7 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use("/v1", refreshRouter);
+
 app.use("/v1", registerRouter);
 app.use("/v1", authRouter);
 app.use("/v1", logoutRouter);
@@ -67,6 +67,7 @@ app.use("/v1", bidRouter);
 app.use("/v1", messageRouter);
 app.use("/v1", portfolioRouter);
 app.use("/v1", notificationRouter);
+app.use("/v1", refreshRouter);
 
 mongoose.connection.once("open", () => {
   console.log("MongoDB connected");

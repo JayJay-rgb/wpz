@@ -43,9 +43,9 @@ foundUser.currentRefreshToken = hashedNewRefreshToken;
 await foundUser.save()
 
         res.cookie("refreshToken", newRefreshToken, {
-            httpOnly: true,
-            secure: true,
-            sameSite: "none",
+            // httpOnly: true,
+            secure:false,
+             sameSite: "lax",
             maxAge: 7 * 24 * 60 * 60 * 1000,
 })
             
