@@ -1,8 +1,10 @@
 import axios from "axios";
 import { useAuthStore } from "../store/authStore";
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 const axiosInstance = axios.create({
-  baseURL: "http://localhost:8000/v1",
+  baseURL: API_URL,
   withCredentials: true,
 });
 
@@ -33,7 +35,7 @@ axiosInstance.interceptors.response.use(
 
       try {
         const refreshResponse = await axios.post(
-          "http://localhost:8000/v1/refresh",
+          `${API_URL}/refresh`,
           {},
           { withCredentials: true }
         );
