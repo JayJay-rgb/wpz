@@ -1,7 +1,7 @@
 import { conversation } from "../model/conversationSchema.mjs";
 import { gig } from "../model/gigSchema.mjs";
 import mongoose from "mongoose";
-import sendNotification from "./notificationController.mjs"
+import {sendNotification} from "./notificationController.mjs"
 import { message } from "../model/messageSchema.mjs";
 
 export const startConversation = async (req, res) => {
@@ -13,9 +13,12 @@ export const startConversation = async (req, res) => {
     if (req.user === recipientId)
       return res.status(400).json({ message: "Cannot message yourself" });
 
-    const existing = await conversation.findOne({
-      participants: { $all: [req.user, recipientId] },
-    });
+    const existing = await conversation
+      .findOne({
+        participants: { $all: [req.user, recipientId] },
+      })
+      .populate("participants", "name")
+      .populate("gig", "title");
 
     if (existing) {
       return res.status(200).json({ conversation: existing });
@@ -32,7 +35,12 @@ export const startConversation = async (req, res) => {
       gig: foundGig ? foundGig._id : undefined,
     });
 
-    res.status(201).json({ conversation: newConversation });
+    const populatedConversation = await conversation
+      .findById(newConversation._id)
+      .populate("participants", "name")
+      .populate("gig", "title");
+
+    res.status(201).json({ conversation: populatedConversation });
   } catch (err) {
     console.log(err);
     res.sendStatus(500);
@@ -45,9 +53,12 @@ export const getMyConversation = async (req, res) => {
       .find({
         participants: req.user,
       })
+      .populate("participants", "name")
+      .populate("gig", "title")
       .sort({ updatedAt: -1 });
+
     if (myConversation.length === 0)
-      return res.status(200).json({ message: "No conversations yet" });
+      return res.status(200).json({ myConversation: [] });
 
     res.status(200).json({ myConversation });
   } catch (err) {
@@ -102,7 +113,6 @@ export const sendMessage = async (req, res) => {
 
     await session.commitTransaction();
 
-    // 🔴 new — emit to the room after commit succeeds
     const io = req.app.get("io");
     io.to(conversationId).emit("newMessage", newMessage);
 
@@ -144,9 +154,9 @@ export const getMessage = async (req, res) => {
 
     const messages = await message
       .find({ conversation: conversationId })
+      .populate("sender", "name")
       .sort({ createdAt: 1 });
-    if (messages.length === 0)
-      return res.status(200).json({ message: "No messages yet" });
+
     res.status(200).json({ messages });
   } catch (err) {
     console.log(err);

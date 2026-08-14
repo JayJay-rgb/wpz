@@ -1,33 +1,37 @@
 import mongoose from "mongoose";
 
 const gigSchema = new mongoose.Schema({
-    client:{
-        type:mongoose.Schema.Types.ObjectId,
-        ref:"User"
+    client: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User"
     },
-    title:{
-        type:String
+    title: {
+        type: String
     },
-    description:{
-        type:String
+    description: {
+        type: String
     },
-    budget:{
-        min:Number,
-        max:Number
+    budget: {
+        min: Number,
+        max: Number
     },
-    status:{
-        type:String,
-        enum:["open","in progress","completed","cancelled"],
-        default:"open"
+    skills: {
+        type: [String],
+        default: []
     },
-    acceptedBid:{
-        type:mongoose.Schema.Types.ObjectId,
-        ref:"Bid"
+    status: {
+        type: String,
+        enum: ["open", "in progress", "completed", "cancelled"],
+        default: "open"
     },
-    createdAt:{
-        type:Date,
-        default:Date.now
+    acceptedBid: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Bid"
+    },
+    createdAt: {
+        type: Date,
+        default: Date.now
     }
 })
 
-export const gig = mongoose.model("Gig",gigSchema)
+export const gig = mongoose.model("Gig", gigSchema)

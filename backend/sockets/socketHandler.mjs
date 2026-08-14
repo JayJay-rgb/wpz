@@ -22,6 +22,9 @@ export const setupSocket = (io) => {
     io.on("connection", (socket) => {
         console.log("A user connected:", socket.userId);
 
+        // join personal room so sendNotification's io.to(userId) reaches this socket
+        socket.join(socket.userId);
+
         socket.on("joinConversation", async (conversationId) => {
             try {
                 const existingConversation = await conversation.findById(conversationId);

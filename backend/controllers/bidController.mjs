@@ -36,7 +36,7 @@ export const createBid = async (req, res) => {
       proposal,
     });
 
-    const io = req.app.get("io"); // grab the io object (remember, we attached it to app earlier)
+    const io = req.app.get("io");
     await sendNotification(io, {
       userId: foundGig.client,
       type: "new_bid",
@@ -46,6 +46,11 @@ export const createBid = async (req, res) => {
 
     res.status(201).json({ bid: newBid });
   } catch (err) {
+    if (err.code === 11000) {
+      return res
+        .status(409)
+        .json({ message: "You've already placed a bid on this gig" });
+    }
     console.log(err);
     res.sendStatus(500);
   }

@@ -1,7 +1,8 @@
 import {user} from "../model/userSchema.mjs";
 import jwt from "jsonwebtoken";
 import "dotenv/config";
-import { comparePassword,hashPassword } from "../utils/hashing.mjs";
+import { comparePassword} from "../utils/hashing.mjs";
+import {hashPassword} from "../utils/hashing.mjs";
 
 const authController = async (req, res) => {
     try{
@@ -17,6 +18,10 @@ const authController = async (req, res) => {
         const isMatched= await comparePassword(password,foundUser.password)
         if (!isMatched) return res.status(401).json({ message: "Invalid password" });
 
+
+        if (!foundUser.isVerified) {
+  return res.status(403).json({ message: "Please verify your email before logging in" });
+}
         const accessToken= jwt.sign(
             { id: foundUser._id },
              process.env.ACCESS_TOKEN_SECRET,

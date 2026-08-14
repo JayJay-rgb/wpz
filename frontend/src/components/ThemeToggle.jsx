@@ -1,37 +1,17 @@
-import React, { useEffect } from 'react'
-import assets from '../assets/assets/assets'
+import  useThemeStore  from "../store/themeStore";
 
-const ThemeToggleBtn = ({theme,setTheme}) => {
-    useEffect(()=>{
-        const prefersDarkMode= window.matchMedia("(prefers-color-scheme:dark)").matches;
-        setTheme(theme||(prefersDarkMode?"dark":"light"))
-    },[])
-
-    useEffect(()=>{
-        if(theme==="dark"){
-            document.documentElement.classList.add('dark')
-        }
-        else{
-            document.documentElement.classList.remove('dark')
-        }
-        localStorage.setItem('theme',theme)
-    },[theme])
+const ThemeToggle = () => {
+  const isDark = useThemeStore((state) => state.isDark);
+  const toggleTheme = useThemeStore((state) => state.toggleTheme);
 
   return (
-    <>
-        <button>
-            {theme === 'dark'? (
-                <img onClick={()=> setTheme("light")} src={assets.sun_icon}
-                className='size-8.5 p-1.5 border border-gray-500
-                rounded-full'/>
-            ):(
-                <img onClick={()=> setTheme("dark")} src={assets.moon_icon}
-                className='size-8.5 p-1.5 border border-gray-500
-                rounded-full' />
-            )}
-        </button>
-    </>
-  )
-}
+    <button
+      onClick={toggleTheme}
+      className="px-3 py-1.5 rounded-full bg-gray-200 dark:bg-gray-700 text-sm"
+    >
+      {isDark ? "☀️ Light" : "🌙 Dark"}
+    </button>
+  );
+};
 
-export default ThemeToggleBtn
+export default ThemeToggle;

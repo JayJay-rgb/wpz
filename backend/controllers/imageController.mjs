@@ -1,11 +1,11 @@
 import mongoose from 'mongoose';
-import { uploadBufferToCloudinary } from '../utils/cloudinaryUpload.js';
-import cloudinary from '../config/cloudinary.js';
+import { uploadBufferToCloudinary } from '../utils/cloudinaryUploads.mjs';
+import cloudinary from '../config/cloudinary.mjs';
 import { user as User } from '../model/userSchema.mjs';
 
 export const addPortfolioItem = async (req, res) => {
   try {
-    const user = await User.findById(req.user._id);
+    const user = await User.findById(req.user);
 
     if (user.portfolio.length >= 12) {
       return res.status(400).json({ message: 'Portfolio limit reached (12 items max)' });
@@ -42,7 +42,7 @@ export const deletePortfolioItem = async (req, res) => {
   try {
     const { itemId } = req.params;
 
-    const user = await User.findById(req.user._id);
+    const user = await User.findById(req.user);
 
     const item = user.portfolio.id(itemId);
 
@@ -69,7 +69,7 @@ export const editPortfolioItem = async (req, res) => {
     const { itemId } = req.params;
     const { title, description, link } = req.body;
 
-    const user = await User.findById(req.user._id);
+    const user = await User.findById(req.user);
     if (!user) return res.status(401).json({ message: 'Not allowed' });
 
     const item = user.portfolio.id(itemId);

@@ -65,7 +65,11 @@ const userSchema= new mongoose.Schema({
     createdAt:{
         type:Date,
         default:Date.now
-    }
+    },
+    emailVerificationPin: {
+    type: String,
+    default: null,
+},
 })
 
 export const user = mongoose.model("User",userSchema)

@@ -1,122 +1,129 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-import './App.css'
+import { useEffect, useState } from "react";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import axios from "axios";
+import useThemeStore from "./store/themeStore.js";
+import { useAuthStore } from "./store/authStore";
+import ProtectedRoute from "./components/ProtectedRoute";
+import Navbar from "./components/Navbar";
+import ThemeToggle from "./components/ThemeToggle";
+import Register from "./pages/Register";
+import VerifyEmail from "./pages/VerifyEmail";
+import Login from "./pages/Login";
+import Onboarding from "./pages/Onboarding";
+import GigFeed from "./pages/GigFeed";
+import GigDetail from "./pages/GigDetail";
+import CreateGig from "./pages/CreateGig";
+import MyBids from "./pages/MyBids";
+import MyGigs from "./pages/MyGigs";
+import UserProfile from "./pages/UserProfile";
+import Conversations from "./pages/Messages";
 
 function App() {
-  const [count, setCount] = useState(0)
+  const initTheme = useThemeStore((state) => state.initTheme);
+  const setAuth = useAuthStore((state) => state.setAuth);
+  const clearAuth = useAuthStore((state) => state.clearAuth);
+  const [authChecked, setAuthChecked] = useState(false);
+
+  useEffect(() => {
+    initTheme();
+
+const bootstrapAuth = async () => {
+  try {
+    const refreshRes = await axios.post(
+      "http://localhost:8000/v1/refresh",
+      {},
+      { withCredentials: true }
+    );
+    const { accessToken } = refreshRes.data;
+
+    const meRes = await axios.get("http://localhost:8000/v1/me", {
+      headers: { Authorization: `Bearer ${accessToken}` },
+      withCredentials: true,
+    });
+
+    setAuth(meRes.data, accessToken);
+  } catch (err) {
+    clearAuth();
+  } finally {
+    setAuthChecked(true);
+  }
+};
+
+    bootstrapAuth();
+  }, []);
+
+  if (!authChecked) {
+    return (
+      <div className="min-h-screen bg-[var(--color-bg)] flex items-center justify-center">
+        <p className="font-[IBM_Plex_Mono] text-xs text-[var(--color-muted)]">Loading...</p>
+      </div>
+    );
+  }
 
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
+    <BrowserRouter>
+      <Navbar />
+      <Routes>
+        {/* Public */}
+        <Route path="/register" element={<Register />} />
+        <Route path="/verify-email" element={<VerifyEmail />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/" element={<GigFeed />} />
+        <Route path="/gigs/:id" element={<GigDetail />} />
+        <Route path="/users/:userId" element={<UserProfile />} />
 
-      <div className="ticks"></div>
-
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
-
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
+        {/* Protected */}
+        <Route
+          path="/onboarding"
+          element={
+            <ProtectedRoute>
+              <Onboarding />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/gigs/new"
+          element={
+            <ProtectedRoute>
+              <CreateGig />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/my-bids"
+          element={
+            <ProtectedRoute>
+              <MyBids />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/my-gigs"
+          element={
+            <ProtectedRoute>
+              <MyGigs />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/messages"
+          element={
+            <ProtectedRoute>
+              <Conversations />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/messages/:conversationId"
+          element={
+            <ProtectedRoute>
+              <Conversations />
+            </ProtectedRoute>
+          }
+        />
+      </Routes>
+    </BrowserRouter>
+  );
 }
 
-export default App
+export default App;

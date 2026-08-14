@@ -42,8 +42,12 @@ const hashedNewRefreshToken = await hashPassword(newRefreshToken);
 foundUser.currentRefreshToken = hashedNewRefreshToken;
 await foundUser.save()
 
-        res.cookie("refreshToken",newRefreshToken,{httpOnly:true,maxAge:7 * 24 * 60 * 60 * 1000})
-            .json({accessToken})
+        res.cookie("refreshToken", newRefreshToken, {
+            httpOnly: true,
+            secure: true,
+            sameSite: "none",
+            maxAge: 7 * 24 * 60 * 60 * 1000,
+})
             
 
         
