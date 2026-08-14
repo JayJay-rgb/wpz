@@ -23,11 +23,13 @@ const app = express();
 const port = process.env.PORT;
 
 const allowedOrigins = [
-  "http://localhost:5173"
+  process.env.CLIENT_URL,
+  "https://wpz.onrender.com",
+  "https://wpz-git-main-jayjay-rgbs-projects.vercel.app",
 ];
 
 app.use(cors({
-  origin: allowedOrigins,
+  origin: process.env.CLIENT_URL,
   credentials: true,
 }));
 
@@ -38,7 +40,7 @@ const server = http.createServer(app);
 
 const io = new Server(server, {
   cors: {
-    origin: allowedOrigins,
+    origin: process.env.CLIENT_URL,
     credentials: true,
   },
 });
