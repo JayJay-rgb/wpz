@@ -20,6 +20,9 @@ const Navbar = () => {
     }
   };
 
+  const navLinkClass =
+    "text-sm font-mono uppercase tracking-wider text-[var(--color-muted)] hover:text-primary transition";
+
   return (
     <nav className="border-b-2 border-dashed border-ink/20 dark:border-white/20 bg-paper dark:bg-paper-dark px-6 py-4 transition-colors">
       <div className="max-w-6xl mx-auto flex items-center justify-between">
@@ -31,34 +34,19 @@ const Navbar = () => {
           <NotificationBell />
           {user ? (
             <>
-              <Link
-                to="/gigs/new"
-                className="text-sm font-mono uppercase tracking-wider text-ink/70 dark:text-paper/70 hover:text-primary transition"
-              >
+              <Link to="/gigs/new" className={navLinkClass}>
                 Post a gig
               </Link>
-              <Link
-                to="/my-bids"
-                className="text-sm font-mono uppercase tracking-wider text-ink/70 dark:text-paper/70 hover:text-primary transition"
-              >
+              <Link to="/my-bids" className={navLinkClass}>
                 My bids
               </Link>
-              <Link
-                to="/my-gigs"
-                className="text-sm font-mono uppercase tracking-wider text-ink/70 dark:text-paper/70 hover:text-primary transition"
-              >
+              <Link to="/my-gigs" className={navLinkClass}>
                 My gigs
               </Link>
-              <Link
-                to="/messages"
-                className="text-sm font-mono uppercase tracking-wider text-ink/70 dark:text-paper/70 hover:text-primary transition"
-              >
+              <Link to="/messages" className={navLinkClass}>
                 Messages
               </Link>
-              <Link
-                to={`/users/${user._id}`}
-                className="text-sm font-mono uppercase tracking-wider text-ink/70 dark:text-paper/70 hover:text-primary transition"
-              >
+              <Link to={`/users/${user._id}`} className={navLinkClass}>
                 Profile
               </Link>
               <button
@@ -70,10 +58,7 @@ const Navbar = () => {
             </>
           ) : (
             <>
-              <Link
-                to="/login"
-                className="text-sm font-mono uppercase tracking-wider text-ink/70 dark:text-paper/70 hover:text-primary transition"
-              >
+              <Link to="/login" className={navLinkClass}>
                 Log in
               </Link>
               <Link

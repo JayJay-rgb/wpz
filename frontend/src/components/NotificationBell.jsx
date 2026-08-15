@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useNotificationStore, TYPE_LABELS } from "../store/notificationStore";
+import { useAuthStore } from "../store/authStore";
 import { getSocket, connectSocket } from "../lib/socket";
 
 function timeAgo(dateStr) {
@@ -16,11 +17,14 @@ function timeAgo(dateStr) {
 export default function NotificationBell() {
   const { notifications, fetchNotifications, markRead, receiveNotification, unreadCount } =
     useNotificationStore();
+  const accessToken = useAuthStore((state) => state.accessToken);
   const [open, setOpen] = useState(false);
   const panelRef = useRef(null);
   const navigate = useNavigate();
 
   useEffect(() => {
+    if (!accessToken) return;
+
     fetchNotifications();
     connectSocket();
 
@@ -30,7 +34,7 @@ export default function NotificationBell() {
     return () => {
       socket.off("newNotification", receiveNotification);
     };
-  }, []);
+  }, [accessToken]);
 
   useEffect(() => {
     const handleClickOutside = (e) => {
@@ -50,6 +54,21 @@ export default function NotificationBell() {
 
   const count = unreadCount();
 
+  if (!accessToken) {
+    return (
+      <button
+        className="relative p-2 rounded-md opacity-40 cursor-not-allowed"
+        aria-label="Notifications"
+        disabled
+      >
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9" />
+          <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+        </svg>
+      </button>
+    );
+  }
+
   return (
     <div className="relative" ref={panelRef}>
       <button
@@ -57,14 +76,7 @@ export default function NotificationBell() {
         className="relative p-2 rounded-md hover:bg-[var(--color-surface)] transition-colors"
         aria-label="Notifications"
       >
-        <svg
-          width="20"
-          height="20"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-        >
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
           <path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9" />
           <path d="M13.73 21a2 2 0 0 1-3.46 0" />
         </svg>

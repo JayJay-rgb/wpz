@@ -8,7 +8,6 @@ const axiosInstance = axios.create({
   withCredentials: true,
 });
 
-// Attach access token to every outgoing request
 axiosInstance.interceptors.request.use((config) => {
   const token = useAuthStore.getState().accessToken;
   if (token) {
@@ -17,7 +16,6 @@ axiosInstance.interceptors.request.use((config) => {
   return config;
 });
 
-// Auto-refresh on 401, then retry the original request once
 axiosInstance.interceptors.response.use(
   (response) => response,
   async (error) => {
@@ -47,7 +45,9 @@ axiosInstance.interceptors.response.use(
         return axiosInstance(originalRequest);
       } catch (refreshError) {
         useAuthStore.getState().clearAuth();
-        window.location.href = "/login";
+        if (window.location.pathname !== "/login") {
+          window.location.href = "/login";
+        }
         return Promise.reject(refreshError);
       }
     }

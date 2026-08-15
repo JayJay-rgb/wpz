@@ -1,6 +1,5 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import axios from "axios";
 import useThemeStore from "./store/themeStore.js";
 import { useAuthStore } from "./store/authStore";
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -20,35 +19,11 @@ import Conversations from "./pages/Messages";
 
 function App() {
   const initTheme = useThemeStore((state) => state.initTheme);
-  const setAuth = useAuthStore((state) => state.setAuth);
-  const clearAuth = useAuthStore((state) => state.clearAuth);
-  const [authChecked, setAuthChecked] = useState(false);
+  const bootstrapAuth = useAuthStore((state) => state.bootstrapAuth);
+  const authChecked = useAuthStore((state) => state.authChecked);
 
   useEffect(() => {
     initTheme();
-
-const bootstrapAuth = async () => {
-  try {
-    const refreshRes = await axios.post(
-      "http://localhost:8000/v1/refresh",
-      {},
-      { withCredentials: true }
-    );
-    const { accessToken } = refreshRes.data;
-
-    const meRes = await axios.get("http://localhost:8000/v1/me", {
-      headers: { Authorization: `Bearer ${accessToken}` },
-      withCredentials: true,
-    });
-
-    setAuth(meRes.data, accessToken);
-  } catch (err) {
-    clearAuth();
-  } finally {
-    setAuthChecked(true);
-  }
-};
-
     bootstrapAuth();
   }, []);
 

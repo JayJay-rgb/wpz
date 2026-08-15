@@ -45,7 +45,7 @@ await foundUser.save()
         res.cookie("refreshToken", newRefreshToken, {
             httpOnly: true,
             secure:True,
-        sameSite: "none",
+            sameSite: "none",
             maxAge: 7 * 24 * 60 * 60 * 1000,
 })
             

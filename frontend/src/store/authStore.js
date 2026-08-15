@@ -1,11 +1,11 @@
 import { create } from "zustand";
 import { disconnectSocket } from "../lib/socket";
-import api from "../api/axiosInstance.js"; // adjust path to your axios instance
+import api from "../api/axiosInstance.js";
 
 export const useAuthStore = create((set) => ({
   user: null,
   accessToken: null,
-  authChecked: false, // true once we've attempted bootstrap, success or fail
+  authChecked: false,
 
   setAuth: (user, accessToken) => set({ user, accessToken }),
 
@@ -16,16 +16,15 @@ export const useAuthStore = create((set) => ({
 
   bootstrapAuth: async () => {
     try {
-      const refreshRes = await api.post("/auth/refresh"); // adjust route if needed
+      const refreshRes = await api.post("/refresh");
       const { accessToken } = refreshRes.data;
 
-      const meRes = await api.get("/users/me", {
+      const meRes = await api.get("/me", {
         headers: { Authorization: `Bearer ${accessToken}` },
       });
 
       set({ user: meRes.data, accessToken, authChecked: true });
     } catch (err) {
-      // No valid session — expected for logged-out visitors, not an error to surface
       set({ user: null, accessToken: null, authChecked: true });
     }
   },
