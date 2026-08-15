@@ -1,4 +1,5 @@
 import express from "express";
+import corsOptions from "./config/cors.mjs"
 import mongoose from "mongoose";
 import "dotenv/config";
 import cors from "cors";
@@ -28,10 +29,7 @@ const allowedOrigins = [
   "https://wpz-git-main-jayjay-rgbs-projects.vercel.app",
 ];
 
-app.use(cors({
-  origin: process.env.CLIENT_URL,
-  credentials: true,
-}));
+app.use(cors(corsOptions));
 
 app.use(express.json());
 app.use(cookieParser());
