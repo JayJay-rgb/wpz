@@ -1,4 +1,4 @@
-import cors from cors;
+import cors from "cors";
 allowedOrigins=["https://wpz.onrender.com","http://localhost:3000","http://localhost:5173","wpz-mocha.vercel.app","https://wpz.vercel.app","https://wpz.netlify.app","https://wpz.fly.dev"]
 
 const corsOption = {
