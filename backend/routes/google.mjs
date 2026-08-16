@@ -7,16 +7,14 @@ import "dotenv/config";
 
 const router = express.Router();
 
-// Step 1: kick off Google OAuth
 router.get(
   "/auth/google",
   passport.authenticate("google", { scope: ["profile", "email"], session: false })
 );
 
-// Step 2: Google redirects back here
 router.get(
   "/auth/google/redirect",
-  passport.authenticate("google", { session: false, failureRedirect: `${process.env.FRONTEND_URL}/login` }),
+  passport.authenticate("google", { session: false, failureRedirect: `${process.env.CLIENT_URL}/login` }),
   async (req, res) => {
     try {
       const foundUser = req.user;
@@ -41,7 +39,7 @@ router.get(
         httpOnly: true,
         secure: true,
         sameSite: "none",
-        maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+        maxAge: 7 * 24 * 60 * 60 * 1000,
       });
 
       res.redirect(`${process.env.CLIENT_URL}/oauth-success?accessToken=${accessToken}`);
