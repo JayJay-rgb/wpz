@@ -2,6 +2,8 @@ import jwt from "jsonwebtoken"
 import "dotenv/config"
 
 const verifyJwt= async(req,res,next)=>{
+    console.log("verifyJwt hit for:", req.method, req.originalUrl);
+
     try{
         const authorizedHeader =  req.headers.authorization||req.headers.Authorization;
         if(!authorizedHeader || !authorizedHeader.startsWith('Bearer')) return res.sendStatus(401);
