@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axiosInstance from "../api/axiosInstance";
+import GoogleAuthButton from "../components/GoogleAuthButton";
 
 const Register = () => {
   const [name, setName] = useState("");
@@ -16,7 +17,7 @@ const Register = () => {
     setLoading(true);
 
     try {
-      await axiosInstance.post("/register", {name,email, password });
+      await axiosInstance.post("/register", { name, email, password });
       navigate("/verify-email", { state: { email } });
     } catch (err) {
       setError(err.response?.data?.message || "Something went wrong");
@@ -49,18 +50,18 @@ const Register = () => {
 
           <form onSubmit={handleSubmit} className="space-y-5">
             <div>
-  <label className="block text-xs font-mono uppercase tracking-wider text-ink/50 dark:text-paper/50 mb-1.5">
-    Name
-  </label>
-  <input
-    type="text"
-    value={name}
-    onChange={(e) => setName(e.target.value)}
-    required
-    className="w-full px-4 py-2.5 rounded-md border border-ink/20 dark:border-white/20 bg-transparent text-ink dark:text-paper focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition"
-    placeholder="Jane Doe"
-  />
-</div>
+              <label className="block text-xs font-mono uppercase tracking-wider text-ink/50 dark:text-paper/50 mb-1.5">
+                Name
+              </label>
+              <input
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                required
+                className="w-full px-4 py-2.5 rounded-md border border-ink/20 dark:border-white/20 bg-transparent text-ink dark:text-paper focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition"
+                placeholder="Jane Doe"
+              />
+            </div>
             <div>
               <label className="block text-xs font-mono uppercase tracking-wider text-ink/50 dark:text-paper/50 mb-1.5">
                 Email
@@ -101,6 +102,16 @@ const Register = () => {
               {loading ? "Creating account..." : "Create account"}
             </button>
           </form>
+
+          <div className="flex items-center gap-3 my-6">
+            <div className="flex-1 h-px bg-ink/10 dark:bg-white/10" />
+            <span className="font-mono text-xs uppercase text-ink/40 dark:text-paper/40">
+              or
+            </span>
+            <div className="flex-1 h-px bg-ink/10 dark:bg-white/10" />
+          </div>
+
+          <GoogleAuthButton label="Sign up with Google" />
 
           <p className="text-sm text-center text-ink/60 dark:text-paper/60 mt-6">
             Already have an account?{" "}

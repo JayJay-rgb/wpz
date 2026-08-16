@@ -2,6 +2,7 @@ import { useState, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axiosInstance from "../api/axiosInstance";
 import { useAuthStore } from "../store/authStore";
+import GoogleAuthButton from "../components/GoogleAuthButton";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -133,6 +134,16 @@ const Login = () => {
                 {loading ? "Logging in..." : "Log in"}
               </button>
             </form>
+
+            <div className="flex items-center gap-3 my-6">
+              <div className="flex-1 h-px bg-ink/10 dark:bg-white/10" />
+              <span className="font-mono text-xs uppercase text-ink/40 dark:text-paper/40">
+                or
+              </span>
+              <div className="flex-1 h-px bg-ink/10 dark:bg-white/10" />
+            </div>
+
+            <GoogleAuthButton label="Continue with Google" />
 
             <p className="text-sm text-center text-ink/60 dark:text-paper/60 mt-6">
               Don't have an account?{" "}

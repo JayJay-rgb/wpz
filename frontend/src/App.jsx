@@ -14,6 +14,7 @@ import GigDetail from "./pages/GigDetail";
 import CreateGig from "./pages/CreateGig";
 import MyBids from "./pages/MyBids";
 import MyGigs from "./pages/MyGigs";
+import OAuthSuccess from "./pages/OAuthSuccess.jsx";
 import UserProfile from "./pages/UserProfile";
 import Conversations from "./pages/Messages";
 
@@ -41,6 +42,7 @@ function App() {
       <Routes>
         {/* Public */}
         <Route path="/register" element={<Register />} />
+        <Route path="/oauth-success" element={<OAuthSuccess />} />
         <Route path="/verify-email" element={<VerifyEmail />} />
         <Route path="/login" element={<Login />} />
         <Route path="/" element={<GigFeed />} />
