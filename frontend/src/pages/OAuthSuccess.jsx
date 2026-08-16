@@ -1,4 +1,3 @@
-// pages/OAuthSuccess.jsx
 import { useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useAuthStore } from "../store/authStore";
@@ -22,7 +21,7 @@ export default function OAuthSuccess() {
         const meRes = await api.get("/me", {
           headers: { Authorization: `Bearer ${accessToken}` },
         });
-        setAuth(meRes.data, accessToken);
+        setAuth(meRes.data.user, accessToken);
         navigate("/");
       } catch (err) {
         navigate("/login");
