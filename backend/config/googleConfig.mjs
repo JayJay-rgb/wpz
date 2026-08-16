@@ -38,21 +38,26 @@ export default passport.use(
             provider: "google",
             googleId: profile.id,
             isVerified: true,
-            profilePic: profile.photos[0].value,
+            profilePic: profile.photos?.[0]?.value,
           });
           return done(null, newUser);
         }
 
-        if (foundUser.provider !== "google") {
-          // Email already registered with a local password account
-          return done(null, false, {
-            message: "Email already registered locally. Please log in with password.",
-          });
+        if (!foundUser.googleId) {
+          // Existing local account, same email — link Google to it instead of rejecting
+          foundUser.googleId = profile.id;
+          foundUser.isVerified = true;
+          if (!foundUser.profilePic && profile.photos?.[0]?.value) {
+            foundUser.profilePic = profile.photos[0].value;
+          }
+          await foundUser.save();
+          return done(null, foundUser);
         }
 
-        // Existing Google user — log them in, don't create a duplicate
+        // Already linked — normal Google login
         return done(null, foundUser);
       } catch (err) {
+        console.error("Google strategy error:", err);
         done(err, null);
       }
     }
