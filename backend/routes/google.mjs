@@ -44,10 +44,10 @@ router.get(
         maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
       });
 
-      res.redirect(`${process.env.FRONTEND_URL}/oauth-success?accessToken=${accessToken}`);
+      res.redirect(`${process.env.CLIENT_URL}/oauth-success?accessToken=${accessToken}`);
     } catch (err) {
       console.error(err);
-      res.redirect(`${process.env.FRONTEND_URL}/login`);
+      res.redirect(`${process.env.CLIENT_URL}/login`);
     }
   }
 );
