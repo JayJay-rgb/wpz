@@ -11,6 +11,7 @@ import refreshRouter from "./routes/refresh.mjs";
 import logoutRouter from "./routes/logout.mjs";
 import gigRouter from "./routes/gig.mjs";
 import bidRouter from "./routes/bid.mjs";
+import "./config/googleConfig.mjs"; // adjust path to match wherever your Strategy file (with passport.use(new Strategy(...))) actually lives
 import meRouter from "./routes/me.mjs";
 import userRouter from "./routes/user.mjs";
 import messageRouter from "./routes/message.mjs";
@@ -20,6 +21,7 @@ import http from "http";
 import { Server } from "socket.io";
 import { setupSocket } from "./sockets/socketHandler.mjs";
 import cookieParser from "cookie-parser";
+import passport from "passport";
 
 const app = express();
 const port = process.env.PORT;
@@ -34,6 +36,7 @@ app.use(cors(corsOptions));
 
 app.use(express.json());
 app.use(cookieParser());
+app.use(passport.initialize());
 
 const server = http.createServer(app);
 
