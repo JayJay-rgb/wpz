@@ -1,6 +1,6 @@
 import Strategy from "passport-google-oauth20";
 import passport from "passport";
-import user from "../model/userSchema.mjs";
+import { user } from "../model/userSchema.mjs";
 import "dotenv/config";
 
 passport.serializeUser((user, done) => {
