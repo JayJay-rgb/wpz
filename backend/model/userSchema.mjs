@@ -37,6 +37,11 @@ const userSchema= new mongoose.Schema({
     password:{
         type:String
     },
+    provider:{
+        type:String,
+        enum:["google","local"],
+        default:"local"
+    },
     googleId:{
         type:String
     },

@@ -3,6 +3,7 @@ import corsOptions from "./config/cors.mjs"
 import mongoose from "mongoose";
 import "dotenv/config";
 import cors from "cors";
+import router from "./routes/google.mjs";
 import connectDB from "./config/db.mjs";
 import authRouter from "./routes/auth.mjs";
 import registerRouter from "./routes/register.mjs";
@@ -51,7 +52,7 @@ app.use((req, res, next) => {
   next();
 });
 
-
+app.use(router)
 app.use("/v1", registerRouter);
 app.use("/v1", authRouter);
 app.use("/v1", logoutRouter);

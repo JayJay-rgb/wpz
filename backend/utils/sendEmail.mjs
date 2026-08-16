@@ -5,7 +5,7 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 
 export const sendVerificationEmail = async (toEmail, pin) => {
   const { error } = await resend.emails.send({
-    from: "WPZ <onboarding@resend.dev>", // fine for dev/testing, no domain setup needed
+    from: "WPZ <onboarding@resend.dev>",
     to: toEmail,
     subject: "Email Verification",
     text: `Your verification pin is ${pin}. It would expire in 15 minutes.`,
