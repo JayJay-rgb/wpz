@@ -26,7 +26,7 @@ const Navbar = () => {
   return (
     <nav className="border-b-2 border-dashed border-ink/20 dark:border-white/20 bg-paper dark:bg-paper-dark px-6 py-4 transition-colors">
       <div className="max-w-6xl mx-auto flex items-center justify-between">
-        <Link to="/" className="font-display text-xl font-semibold text-ink dark:text-paper">
+        <Link to="/" className="font-display text-xl font-semibold text-ink dark:text-white">
           WPZ
         </Link>
 
