@@ -11,7 +11,7 @@ import refreshRouter from "./routes/refresh.mjs";
 import logoutRouter from "./routes/logout.mjs";
 import gigRouter from "./routes/gig.mjs";
 import bidRouter from "./routes/bid.mjs";
-import "./config/googleConfig.mjs"; // adjust path to match wherever your Strategy file (with passport.use(new Strategy(...))) actually lives
+import "./config/googleConfig.mjs";
 import meRouter from "./routes/me.mjs";
 import userRouter from "./routes/user.mjs";
 import messageRouter from "./routes/message.mjs";
@@ -41,7 +41,7 @@ app.use(passport.initialize());
 const server = http.createServer(app);
 
 const io = new Server(server, {
-  cors:corsOptions
+  cors: corsOptions
 });
 
 app.set("io", io);
@@ -63,10 +63,10 @@ app.use("/v1", meRouter);
 app.use("/v1", userRouter);
 app.use("/v1", gigRouter);
 app.use("/v1", bidRouter);
+app.use("/v1", refreshRouter);       // moved up — must come before any router with a blanket verifyJwt
 app.use("/v1", messageRouter);
 app.use("/v1", portfolioRouter);
 app.use("/v1", notificationRouter);
-app.use("/v1", refreshRouter);
 
 mongoose.connection.once("open", () => {
   console.log("MongoDB connected");
