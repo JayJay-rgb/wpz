@@ -5,13 +5,18 @@ const verifyJwt= async(req,res,next)=>{
     console.log("verifyJwt hit for:", req.method, req.originalUrl);
 
     try{
-        const authorizedHeader =  req.headers.authorization||req.headers.Authorization;
-if (!authorizedHeader || !authorizedHeader.startsWith("Bearer")) {
-    console.log("NO VALID AUTH HEADER:", authorizedHeader);
-    return res.sendStatus(401);
-}
-        const token = authorizedHeader.split(" ")[1]
-        
+        const authorizedHeader =
+          req.headers.authorization || req.headers.Authorization;
+
+        if (!authorizedHeader?.startsWith("Bearer ")) {
+          return res.sendStatus(401);
+        }
+
+        const token = authorizedHeader.split(" ")[1];
+
+        if (!token) {
+          return res.sendStatus(401);
+        }
 
         jwt.verify(
             token,
