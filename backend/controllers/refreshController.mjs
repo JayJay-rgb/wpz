@@ -58,3 +58,5 @@ const refreshController = async (req, res) => {
     return res.sendStatus(500);
   }
 };
+
+export default refreshController;
