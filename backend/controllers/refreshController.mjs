@@ -1,35 +1,36 @@
 import jwt from "jsonwebtoken";
 import "dotenv/config";
 import { user } from "../model/userSchema.mjs";
-import { comparePassword } from "../utils/hashing.mjs";
+import { comparePassword, hashPassword } from "../utils/hashing.mjs";
 
 const refreshController = async (req, res) => {
   try {
     const refreshToken = req.cookies.refreshToken;
-
     if (!refreshToken) {
-      return res.status(401).json({ message: "Refresh token not found" });
+      return res.status(403).json({ message: "Refresh token not found" });
     }
 
-    const decoded = jwt.verify(
-      refreshToken,
-      process.env.REFRESH_TOKEN_SECRET
-    );
+    let decoded;
+    try {
+      decoded = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
+    } catch (err) {
+      console.log(err);
+      return res.status(403).json({ message: "invalid token" });
+    }
 
     const foundUser = await user.findById(decoded.id);
+    if (!foundUser) return res.status(404).json({ message: "No found user" });
 
-    if (!foundUser) {
-      return res.status(401).json({ message: "Invalid refresh token" });
-    }
-
-    const isValid = await comparePassword(
-      refreshToken,
-      foundUser.currentRefreshToken
-    );
-
+    const isValid = await comparePassword(refreshToken, foundUser.currentRefreshToken);
     if (!isValid) {
-      return res.status(401).json({ message: "Invalid refresh token" });
+      return res.sendStatus(403);
     }
+
+    const newRefreshToken = jwt.sign(
+      { id: foundUser._id },
+      process.env.REFRESH_TOKEN_SECRET,
+      { expiresIn: "7d" }
+    );
 
     const accessToken = jwt.sign(
       { id: foundUser._id },
@@ -37,16 +38,13 @@ const refreshController = async (req, res) => {
       { expiresIn: "1d" }
     );
 
-    const newrefreshToken = jwt.sign(
-      { id: foundUser._id },
-      process.env.REFRESH_TOKEN_SECRET,
-      { expiresIn: "7d" }
-    );
-
-    foundUser.currentRefreshToken = await hashPassword(newrefreshToken);
+    const hashedNewRefreshToken = await hashPassword(newRefreshToken);
+    foundUser.currentRefreshToken = hashedNewRefreshToken;
     await foundUser.save();
 
-    res.cookie("refreshToken", newrefreshToken, {
+    const isProduction = process.env.NODE_ENV === "production";
+
+    res.cookie("refreshToken", newRefreshToken, {
       httpOnly: true,
       secure: true,
       sameSite: "none",
@@ -56,9 +54,7 @@ const refreshController = async (req, res) => {
 
     return res.status(200).json({ accessToken });
   } catch (err) {
-    console.error(err);
-    return res.status(401).json({ message: "Invalid refresh token" });
+    console.log(err);
+    return res.sendStatus(500);
   }
 };
-
-export default refreshController;
