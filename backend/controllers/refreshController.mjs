@@ -37,16 +37,16 @@ const refreshController = async (req, res) => {
       { expiresIn: "1d" }
     );
 
-    const refreshToken = jwt.sign(
+    const newrefreshToken = jwt.sign(
       { id: foundUser._id },
       process.env.REFRESH_TOKEN_SECRET,
       { expiresIn: "7d" }
     );
 
-    foundUser.currentRefreshToken = await hashPassword(refreshToken);
+    foundUser.currentRefreshToken = await hashPassword(newrefreshToken);
     await foundUser.save();
 
-    res.cookie("refreshToken", refreshToken, {
+    res.cookie("refreshToken", newrefreshToken, {
       httpOnly: true,
       secure: true,
       sameSite: "none",
