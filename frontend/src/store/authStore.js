@@ -1,8 +1,10 @@
 import { create } from "zustand";
 import { disconnectSocket } from "../lib/socket";
-import api from "../api/axiosInstance.js";
+import axiosInstance from "../api/axiosInstance.js";
 
-export const useAuthStore = create((set) => ({
+let bootstrapPromise = null;
+
+export const useAuthStore = create((set, get) => ({
   user: null,
   accessToken: null,
   authChecked: false,
@@ -11,21 +13,48 @@ export const useAuthStore = create((set) => ({
 
   clearAuth: () => {
     disconnectSocket();
-    set({ user: null, accessToken: null });
+    set({
+      user: null,
+      accessToken: null,
+      authChecked: true,
+    });
   },
 
   bootstrapAuth: async () => {
-    try {
-      const refreshRes = await api.post("/refresh");
-      const { accessToken } = refreshRes.data;
+    if (get().authChecked) return;
 
-      const meRes = await api.get("/me", {
-        headers: { Authorization: `Bearer ${accessToken}` },
-      });
+    // Prevent duplicate refresh requests
+    if (bootstrapPromise) return bootstrapPromise;
 
-      set({ user: meRes.data, accessToken, authChecked: true });
-    } catch (err) {
-      set({ user: null, accessToken: null, authChecked: true });
-    }
+    bootstrapPromise = (async () => {
+      try {
+        const refreshRes = await axiosInstance.post("/refresh");
+        const { accessToken } = refreshRes.data;
+
+        const meRes = await axiosInstance.get("/me", {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        });
+
+        const user = meRes.data.user ?? meRes.data;
+
+        set({
+          user,
+          accessToken,
+          authChecked: true,
+        });
+      } catch (err) {
+        set({
+          user: null,
+          accessToken: null,
+          authChecked: true,
+        });
+      } finally {
+        bootstrapPromise = null;
+      }
+    })();
+
+    return bootstrapPromise;
   },
 }));
