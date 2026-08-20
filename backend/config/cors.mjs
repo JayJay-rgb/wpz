@@ -1,9 +1,17 @@
-import cors from "cors";
-const allowedOrigins=["https://wpz.onrender.com","http://localhost:3000","http://localhost:5173","https://wpz-mocha.vercel.app","https://wpz.vercel.app","https://wpz.netlify.app","https://wpz.fly.dev"]
+const allowedOrigins = [
+    process.env.CLIENT_URL,
+    "https://wpz.onrender.com",
+    "http://localhost:3000",
+    "http://localhost:5173",
+    "https://wpz-mocha.vercel.app",
+    "https://wpz.vercel.app",
+    "https://wpz.netlify.app",
+    "https://wpz.fly.dev"
+].filter(Boolean)
 
 const corsOption = {
     origin:(origin,callback)=>{
-        if(allowedOrigins.indexOf(origin)!==-1||!origin){
+        if(allowedOrigins.includes(origin) || !origin){
             callback(null,true)
         }
         else{

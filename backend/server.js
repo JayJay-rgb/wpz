@@ -1,6 +1,5 @@
 import express from "express";
 import corsOptions from "./config/cors.mjs"
-import mongoose from "mongoose";
 import "dotenv/config";
 import cors from "cors";
 import router from "./routes/google.mjs";
@@ -26,12 +25,6 @@ import passport from "passport";
 const app = express();
 const port = process.env.PORT;
 
-const allowedOrigins = [
-  process.env.CLIENT_URL,
-  "https://wpz.onrender.com",
-  "https://wpz-git-main-jayjay-rgbs-projects.vercel.app",
-];
-
 app.use(cors(corsOptions));
 
 app.use(express.json());
@@ -47,8 +40,6 @@ const io = new Server(server, {
 app.set("io", io);
 
 setupSocket(io);
-
-connectDB();
 
 app.use((req, res, next) => {
   console.log(req.method, req.originalUrl);
@@ -68,10 +59,10 @@ app.use("/v1", messageRouter);
 app.use("/v1", portfolioRouter);
 app.use("/v1", notificationRouter);
 
-mongoose.connection.once("open", () => {
-  console.log("MongoDB connected");
+server.listen(port, () => {
+  console.log(`Server running on http://localhost:${port}`);
+});
 
-  server.listen(port, () => {
-    console.log(`Server running on http://localhost:${port}`);
-  });
+connectDB().then(() => {
+  console.log("MongoDB connected");
 });
